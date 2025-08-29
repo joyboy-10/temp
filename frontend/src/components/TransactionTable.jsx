@@ -40,7 +40,7 @@ const TransactionTable = ({
 
   const formatAmount = (amountWei) => {
     try {
-      const eth = parseFloat(amountWei) / Math.pow(10, 18);
+      const eth = parseFloat(amountWei);
       return `${eth.toFixed(4)} ETH`;
     } catch {
       return '0 ETH';
@@ -91,11 +91,14 @@ const TransactionTable = ({
             {transactions.map((tx, index) => (
               <tr 
                 key={tx.id || index} 
-                className="border-b border-gray-100 hover:bg-gray-50 transition-colors duration-200"
+                className={`border-b border-gray-100 hover:bg-gray-50 transition-colors duration-200 ${
+                  currentUserAddress && tx.creator && tx.creator.toLowerCase() === currentUserAddress.toLowerCase() 
+                    ? 'bg-blue-50' : ''
+                }`}
               >
                 <td className="py-3 px-4 font-mono text-sm">{tx.id}</td>
                 <td className="py-3 px-4 font-mono text-sm">{truncateAddress(tx.receiver)}</td>
-                <td className="py-3 px-4 font-semibold text-gray-800">{formatAmount(tx.amountWei)}</td>
+                <td className="py-3 px-4 font-semibold text-gray-800">{formatAmount(tx.amount)}</td>
                 <td className="py-3 px-4 text-gray-600">{tx.purpose || 'N/A'}</td>
                 <td className="py-3 px-4">
                   <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(tx.status)}`}>

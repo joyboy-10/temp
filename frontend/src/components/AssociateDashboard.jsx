@@ -1,20 +1,16 @@
 import React, { useState } from 'react';
-import { User, Plus, LogOut, Send, Calendar, Flag, MessageSquare, TrendingUp, DollarSign } from 'lucide-react';
+import { User, Send, LogOut, MessageSquare, TrendingUp, DollarSign, CheckCircle, Clock } from 'lucide-react';
 import MetricsCard from './MetricsCard';
 import TransactionTable from './TransactionTable';
 
 const AssociateDashboard = ({ 
   user, 
-  institutionId, 
-  balance, 
+  institutionData, 
   transactions, 
   onCreateTransaction, 
-  onLogout,
-  message 
+  onLogout 
 }) => {
   const [showCreateTransaction, setShowCreateTransaction] = useState(false);
-  const [showCreateTask, setShowCreateTask] = useState(false);
-  const [tasks, setTasks] = useState(['Office Supplies', 'Equipment Maintenance', 'Software License', 'Travel Expenses']);
   const [transactionData, setTransactionData] = useState({
     receiver: '',
     amount: '',
@@ -23,7 +19,17 @@ const AssociateDashboard = ({
     priority: 'medium',
     comment: ''
   });
-  const [newTask, setNewTask] = useState('');
+
+  const purposes = [
+    'Office Supplies',
+    'Equipment Maintenance', 
+    'Software License',
+    'Travel Expenses',
+    'Marketing',
+    'Training',
+    'Utilities',
+    'Other'
+  ];
 
   const handleInputChange = (field, value) => {
     setTransactionData(prev => ({ ...prev, [field]: value }));
@@ -46,31 +52,23 @@ const AssociateDashboard = ({
     setShowCreateTransaction(false);
   };
 
-  const handleCreateTask = (e) => {
-    e.preventDefault();
-    if (!newTask.trim()) return;
-    setTasks(prev => [...prev, newTask.trim()]);
-    setNewTask('');
-    setShowCreateTask(false);
-  };
-
-  // Calculate metrics from user's transactions
+  // Filter user's transactions
   const userTransactions = transactions.filter(tx => 
     tx.creator && user?.address && tx.creator.toLowerCase() === user.address.toLowerCase()
   );
   
   const approvedTransactions = userTransactions.filter(tx => tx.status === 1);
   const totalRequested = userTransactions.reduce((sum, tx) => {
-    return sum + (parseFloat(tx.amountWei) / Math.pow(10, 18));
+    return sum + (parseFloat(tx.amount) || 0);
   }, 0);
   
   const totalApproved = approvedTransactions.reduce((sum, tx) => {
-    return sum + (parseFloat(tx.amountWei) / Math.pow(10, 18));
+    return sum + (parseFloat(tx.amount) || 0);
   }, 0);
 
   const pendingTransactions = userTransactions.filter(tx => tx.status === 0);
 
-  // Get admin messages (auditor comments on reviewed transactions)
+  // Get admin messages
   const adminMessages = userTransactions
     .filter(tx => tx.auditorComment && tx.auditorComment.trim())
     .map(tx => ({
@@ -80,6 +78,8 @@ const AssociateDashboard = ({
       date: tx.createdAt
     }));
 
+  const balance = institutionData?.balance || '0';
+
   return (
     <div className="min-h-screen p-4 md:p-6">
       <div className="max-w-7xl mx-auto">
@@ -88,18 +88,12 @@ const AssociateDashboard = ({
           <div className="mb-4 md:mb-0">
             <h1 className="text-3xl font-bold text-gray-800 mb-2">Associate Dashboard</h1>
             <div className="flex flex-col gap-1 text-sm text-gray-600">
-              <p>Institution ID: <span className="font-mono font-semibold">{institutionId}</span></p>
+              <p>Institution: <span className="font-semibold">{institutionData?.institution?.name}</span></p>
+              <p>ID: <span className="font-mono font-semibold">{user?.institutionId}</span></p>
               <p>Address: <span className="font-mono font-semibold">{user?.address}</span></p>
             </div>
           </div>
           <div className="flex gap-3">
-            <button
-              onClick={() => setShowCreateTask(true)}
-              className="btn-secondary inline-flex items-center gap-2"
-            >
-              <Plus className="w-4 h-4" />
-              Add Task
-            </button>
             <button
               onClick={() => setShowCreateTransaction(true)}
               className="btn-primary inline-flex items-center gap-2"
@@ -121,7 +115,7 @@ const AssociateDashboard = ({
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <MetricsCard
             title="Institution Balance"
-            value={`${parseFloat(balance || 0).toFixed(4)} ETH`}
+            value={`${parseFloat(balance).toFixed(4)} ETH`}
             icon={DollarSign}
             color="primary"
           />
@@ -172,10 +166,10 @@ const AssociateDashboard = ({
           </div>
         )}
 
-        {/* Transaction History */}
+        {/* My Transactions */}
         <div>
           <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-            <DollarSign className="w-5 h-5 text-primary-500" />
+            <User className="w-5 h-5 text-primary-500" />
             My Transactions ({userTransactions.length})
           </h2>
           <TransactionTable
@@ -226,8 +220,8 @@ const AssociateDashboard = ({
                     required
                   >
                     <option value="">Select purpose...</option>
-                    {tasks.map((task, index) => (
-                      <option key={index} value={task}>{task}</option>
+                    {purposes.map((purpose, index) => (
+                      <option key={index} value={purpose}>{purpose}</option>
                     ))}
                   </select>
                 </div>
@@ -274,40 +268,6 @@ const AssociateDashboard = ({
                   <button
                     type="button"
                     onClick={() => setShowCreateTransaction(false)}
-                    className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg font-medium transition-all duration-300"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        )}
-
-        {/* Create Task Modal */}
-        {showCreateTask && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-xl p-6 w-full max-w-md animate-slide-up">
-              <h3 className="text-lg font-bold text-gray-800 mb-4">Create New Task</h3>
-              <form onSubmit={handleCreateTask}>
-                <div className="mb-4">
-                  <label className="label">Task Name</label>
-                  <input
-                    type="text"
-                    value={newTask}
-                    onChange={(e) => setNewTask(e.target.value)}
-                    className="input-field"
-                    placeholder="Enter task name"
-                    required
-                  />
-                </div>
-                <div className="flex gap-3">
-                  <button type="submit" className="btn-secondary flex-1">
-                    Create Task
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setShowCreateTask(false)}
                     className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg font-medium transition-all duration-300"
                   >
                     Cancel
