@@ -1,0 +1,47 @@
+{
+  "institutions": {
+    "15568826": {
+      "name": "Chennai Institute of Technology",
+      "location": "Chennai",
+      "auditorAddress": "0x7A6f236F0D99D741b46B3F99D70955c56C209d35",
+      "auditorKeystore": "C:\\Users\\jeeva\\Downloads\\Ledger-Knight\\Ledger-Knight\\backend\\data\\15568826-auditor.json",
+      "onchainId": "10",
+      "associates": {
+        "EMP2": {
+          "address": "0xb7d09375CDd630E4221971357c373141b5804E28",
+          "keystore": "C:\\Users\\jeeva\\Downloads\\Ledger-Knight\\Ledger-Knight\\backend\\data\\15568826-EMP2.json"
+        }
+      }
+    },
+    "49102329": {
+      "name": "tvebuch",
+      "location": "vbihwnjc",
+      "auditorAddress": "0xA85e51CaFDa1212C0f6D95Ce7E849dcA99486308",
+      "auditorKeystore": "C:\\Users\\jeeva\\Downloads\\Ledger-Knight\\Ledger-Knight\\backend\\data\\49102329-auditor.json",
+      "onchainId": "4",
+      "associates": {}
+    },
+    "70866622": {
+      "name": "tvebuch",
+      "location": "vbihwnjc",
+      "auditorAddress": "0xECcAC4513B4Bb7783d5E6f3b98e278710FC0478C",
+      "auditorKeystore": "C:\\Users\\jeeva\\Downloads\\Ledger-Knight\\Ledger-Knight\\backend\\data\\70866622-auditor.json",
+      "onchainId": "8",
+      "associates": {}
+    },
+    "90511365": {
+      "name": "Chennai Institute of Technology",
+      "location": "Chennai",
+      "auditorAddress": "0x6C662846191c0D2b2814bA48505437E9258858CE",
+      "auditorKeystore": "C:\\Users\\jeeva\\Downloads\\Ledger-Knight\\Ledger-Knight\\backend\\data\\90511365-auditor.json",
+      "onchainId": "9",
+      "associates": {
+        "EMP1": {
+          "address": "0x589Fc08d63a9a14aAb46A3A9F4938b0d2Ab89d07",
+          "keystore": "C:\\Users\\jeeva\\Downloads\\Ledger-Knight\\Ledger-Knight\\backend\\data\\90511365-EMP1.json"
+        }
+      }
+    }
+  },
+  "nextEmpId": 3
+}
