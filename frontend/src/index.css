@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-white rounded-xl shadow-lg border border-gray-100 p-6 transition-all duration-300 hover:shadow-xl hover:scale-[1.02];
+  }
+  
+  .btn-primary {
+    @apply bg-gradient-to-r from-primary-500 to-primary-600 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 hover:from-primary-600 hover:to-primary-700 hover:shadow-lg hover:scale-105 focus:outline-none focus:ring-4 focus:ring-primary-200;
+  }
+  
+  .btn-secondary {
+    @apply bg-gradient-to-r from-secondary-500 to-secondary-600 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 hover:from-secondary-600 hover:to-secondary-700 hover:shadow-lg hover:scale-105 focus:outline-none focus:ring-4 focus:ring-secondary-200;
+  }
+  
+  .btn-success {
+    @apply bg-gradient-to-r from-success-500 to-success-600 text-white px-4 py-2 rounded-lg font-medium transition-all duration-300 hover:from-success-600 hover:to-success-700 hover:shadow-md hover:scale-105;
+  }
+  
+  .btn-warning {
+    @apply bg-gradient-to-r from-warning-500 to-warning-600 text-white px-4 py-2 rounded-lg font-medium transition-all duration-300 hover:from-warning-600 hover:to-warning-700 hover:shadow-md hover:scale-105;
+  }
+  
+  .btn-error {
+    @apply bg-gradient-to-r from-error-500 to-error-600 text-white px-4 py-2 rounded-lg font-medium transition-all duration-300 hover:from-error-600 hover:to-error-700 hover:shadow-md hover:scale-105;
+  }
+  
+  .input-field {
+    @apply w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-4 focus:ring-primary-100 focus:border-primary-500 transition-all duration-300 bg-white;
+  }
+  
+  .label {
+    @apply block text-sm font-semibold text-gray-700 mb-2;
+  }
+}
