@@ -68,7 +68,7 @@ class AuthService {
   }
 
   // Login associate
-  async loginAssociate(institutionId, empId, password) {
+  async loginAssociate(institutionId, username, password) {
     const db = readDB();
     const institution = db.institutions[institutionId];
     
@@ -76,8 +76,11 @@ class AuthService {
       throw new Error('Institution not found');
     }
 
-    const associate = db.associates[empId];
-    if (!associate || associate.institutionId !== institutionId) {
+    const associate = Object.values(db.associates).find(
+      a => a.institutionId === institutionId && a.username === username
+    );
+    
+    if (!associate) {
       throw new Error('Associate not found');
     }
 
@@ -97,6 +100,7 @@ class AuthService {
       token,
       user: {
         id: associate.id,
+        username: associate.username,
         institutionId,
         role: 'associate',
         address: associate.walletAddress
@@ -105,12 +109,21 @@ class AuthService {
   }
 
   // Create associate
-  async createAssociate(institutionId, password, createdBy) {
+  async createAssociate(institutionId, username, password, createdBy) {
     const db = readDB();
     const institution = db.institutions[institutionId];
     
     if (!institution) {
       throw new Error('Institution not found');
+    }
+
+    // Check if username already exists for this institution
+    const existingAssociate = Object.values(db.associates).find(
+      a => a.institutionId === institutionId && a.username === username
+    );
+    
+    if (existingAssociate) {
+      throw new Error('Username already exists for this institution');
     }
 
     // Check associate limit
@@ -136,6 +149,7 @@ class AuthService {
 
     const associate = {
       id: empId,
+      username,
       institutionId,
       walletAddress: wallet.address,
       privateKey: wallet.privateKey,
@@ -149,7 +163,50 @@ class AuthService {
 
     return {
       empId,
+      username,
       address: wallet.address
+    };
+  }
+
+  // Delete associate
+  async deleteAssociate(institutionId, username, auditorPassword) {
+    const db = readDB();
+    const institution = db.institutions[institutionId];
+    
+    if (!institution) {
+      throw new Error('Institution not found');
+    }
+
+    // Verify auditor password
+    const auditor = db.auditors[institution.auditorId];
+    if (!auditor) {
+      throw new Error('Auditor not found');
+    }
+
+    const isValidPassword = await this.verifyPassword(auditorPassword, auditor.passwordHash);
+    if (!isValidPassword) {
+      throw new Error('Invalid auditor password');
+    }
+
+    // Find associate by username
+    const associate = Object.values(db.associates).find(
+      a => a.institutionId === institutionId && a.username === username
+    );
+    
+    if (!associate) {
+      throw new Error('Associate not found');
+    }
+
+    // Delete associate
+    delete db.associates[associate.id];
+    writeDB(db);
+
+    return {
+      success: true,
+      deletedAssociate: {
+        id: associate.id,
+        username: associate.username
+      }
     };
   }
 }

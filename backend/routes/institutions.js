@@ -123,6 +123,7 @@ router.get('/:institutionId/summary', authenticateToken, requireInstitutionAcces
       balance,
       associates: associates.map(a => ({
         id: a.id,
+        username: a.username,
         address: a.walletAddress
       })),
       metrics: {

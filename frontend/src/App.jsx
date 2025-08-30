@@ -96,7 +96,7 @@ const App = () => {
       } else {
         res = await axios.post('/auth/login-associate', {
           institutionId,
-          empId: associateId,
+          username: associateId,
           password
         });
       }
@@ -112,16 +112,34 @@ const App = () => {
     }
   };
 
-  const handleCreateAssociate = async (password) => {
+  const handleCreateAssociate = async (username, password, auditorPassword) => {
     try {
       const res = await axios.post('/auth/create-associate', {
         institutionId: user.institutionId,
-        password
+        username,
+        password,
+        auditorPassword
       });
-      showMessage('success', `Associate created!\nID: ${res.data.empId}\nAddress: ${res.data.address}`);
+      showMessage('success', `Associate created!\nUsername: ${res.data.username}\nID: ${res.data.empId}\nAddress: ${res.data.address}`);
       fetchInstitutionData();
     } catch (error) {
       showMessage('error', error.response?.data?.error || 'Failed to create associate');
+    }
+  };
+
+  const handleDeleteAssociate = async (username, auditorPassword) => {
+    try {
+      const res = await axios.delete('/auth/delete-associate', {
+        data: {
+          institutionId: user.institutionId,
+          username,
+          auditorPassword
+        }
+      });
+      showMessage('success', `Associate ${username} deleted successfully`);
+      fetchInstitutionData();
+    } catch (error) {
+      showMessage('error', error.response?.data?.error || 'Failed to delete associate');
     }
   };
 
@@ -188,6 +206,7 @@ const App = () => {
             institutionData={institutionData}
             transactions={transactions}
             onCreateAssociate={handleCreateAssociate}
+            onDeleteAssociate={handleDeleteAssociate}
             onReviewTransaction={handleReviewTransaction}
             onLogout={handleLogout}
             message={message}

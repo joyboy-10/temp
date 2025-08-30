@@ -162,14 +162,14 @@ const Auth = ({ onRegister, onLogin, message, setMessage }) => {
                 <div>
                   <label className="label">
                     <User className="w-4 h-4 inline mr-2" />
-                    Associate ID
+                    Username
                   </label>
                   <input
                     type="text"
                     value={formData.associateId}
                     onChange={(e) => handleInputChange('associateId', e.target.value)}
                     className="input-field"
-                    placeholder="Enter associate ID"
+                    placeholder="Enter username"
                   />
                 </div>
               )}
